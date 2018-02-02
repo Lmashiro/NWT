@@ -8,10 +8,6 @@ contract SimpleCrowdSale is ERC20Token {
 
     bool public funding = true; // funding state
 
-    //2018/2/5 20:24:27
-    uint256 public startTime = 1517833467; //crowdsale start time (in seconds)
-    uint256 public endTime = 1517833467; //crowdsale end time (in seconds)
-
     uint256 public tokenContributionRate = 7000; // how many tokens one QTUM equals
     uint256 public tokenContributionCap = 4000000000 * 100000000; // max amount raised during crowdsale
     uint256 public tokenContributionMin = 3000000000 * 100000000; // min amount raised during crowdsale
@@ -90,7 +86,7 @@ contract SimpleCrowdSale is ERC20Token {
         public
     {
         assert(funding);
-        assert(now >= endTime && totalSupply >= tokenContributionMin);
+        assert(totalSupply >= tokenContributionMin);
 
         funding = false;
         uint256 additionalTokens =
