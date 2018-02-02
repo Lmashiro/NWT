@@ -29,7 +29,7 @@ contract SimpleCrowdSale is ERC20Token {
         _;
     }
 
-    // 初始化合约
+    // new world token contract initialize
     function SimpleCrowdSale()
         ERC20Token("NewWorldToken", "NWT", 8)
     {
