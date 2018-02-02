@@ -1,3 +1,3 @@
-# SimpleCrowdSale
+# New World Token
 
-* a simple crowdsale contract on QTUM
+* New World Token Based on QTUM

@@ -8,14 +8,15 @@ contract SimpleCrowdSale is ERC20Token {
 
     bool public funding = true; // funding state
 
-    uint256 public startTime = 0; //crowdsale start time (in seconds)
-    uint256 public endTime = 0; //crowdsale end time (in seconds)
+    //2018/2/5 20:24:27
+    uint256 public startTime = 1517833467; //crowdsale start time (in seconds)
+    uint256 public endTime = 1517833467; //crowdsale end time (in seconds)
 
-    uint256 public tokenContributionRate = 0; // how many tokens one QTUM equals
-    uint256 public tokenContributionCap = 0; // max amount raised during crowdsale
-    uint256 public tokenContributionMin = 0; // min amount raised during crowdsale
+    uint256 public tokenContributionRate = 7000; // how many tokens one QTUM equals
+    uint256 public tokenContributionCap = 4000000000 * 100000000; // max amount raised during crowdsale
+    uint256 public tokenContributionMin = 3000000000 * 100000000; // min amount raised during crowdsale
 
-    uint8 public founderPercentOfTotal = 0; // should between 0 to 99
+    uint8 public founderPercentOfTotal = 60; // should between 0 to 99
     address public founder = 0x0; // the contract creator's address
 
     // triggered when this contract is deployed
@@ -27,42 +28,16 @@ contract SimpleCrowdSale is ERC20Token {
     // triggered when crowdsale is over
     event Finalized(uint256 _time);
 
-
-    modifier between(uint256 _startTime, uint256 _endTime) {
-        assert(now >= _startTime && now < _endTime);
-        _;
-    }
-
     modifier validAmount(uint256 _amount) {
         require(_amount > 0);
         _;
     }
 
     // 设定ICO的 开始时间、持续时间、汇率、最小目标、最大目标、代币名称、符号
-    function SimpleCrowdSale(uint256 _startTime,
-                     uint256 _duration,
-                     uint256 _tokenContributionMin,
-                     uint256 _tokenContributionCap,
-                     uint256 _tokenContributionRate,
-                     uint8 _founderPercentOfTotal,
-                     string _name,
-                     string _symbol)
-        ERC20Token(_name, _symbol, 8)
-        validAmount(_tokenContributionRate)
-        validAmount(_tokenContributionMin)
-        validAmount(_tokenContributionCap)
-        validAmount(_tokenContributionCap - _tokenContributionMin)
-        validAmount(_founderPercentOfTotal)
-        validAmount(100 - founderPercentOfTotal)
+    function SimpleCrowdSale()
+        ERC20Token("NewWorldToken", "NWT", 8)
     {
-        assert(now <= _startTime);
         founder = msg.sender;
-        startTime = _startTime;
-        endTime = safeAdd(_startTime, _duration);
-        tokenContributionRate = _tokenContributionRate;
-        tokenContributionMin = _tokenContributionMin*100000000;
-        tokenContributionCap = _tokenContributionCap*100000000;
-        founderPercentOfTotal = _founderPercentOfTotal;
         ContractCreated(address(this));
     }
 
@@ -76,11 +51,21 @@ contract SimpleCrowdSale is ERC20Token {
     function contribute()
         public
         payable
-        between(startTime, endTime)
         validAmount(msg.value)
         returns (uint256 amount)
     {
         assert(totalSupply < tokenContributionCap);
+
+        //阶梯价格
+        if(totalSupply>=3000000000 * 100000000) {
+            tokenContributionRate = 7000;
+        }else if(totalSupply>=2000000000 * 100000000) {
+            tokenContributionRate = 7777;
+        }else if(totalSupply>=1000000000 * 100000000) {
+            $tokenContributionRate = 8750;
+        }else if(totalSupply>=0) {
+            $tokenContributionRate = 10000;
+        }
 
         uint256 tokenAmount = safeMul(msg.value, tokenContributionRate);
         uint back_qtum = 0;
@@ -117,20 +102,4 @@ contract SimpleCrowdSale is ERC20Token {
         founder.transfer(this.balance);
     }
 
-    function refund()
-        public
-    {
-        assert(funding);
-        assert(now >= endTime && totalSupply <= tokenContributionMin);
-
-        uint256 tokenAmount = balanceOf[msg.sender];
-        assert(tokenAmount > 0);
-
-        balanceOf[msg.sender] = 0;
-        totalSupply = safeSub(totalSupply, tokenAmount);
-
-        uint256 refundValue = tokenAmount/tokenContributionRate;
-        Refund(msg.sender, refundValue);
-        msg.sender.transfer(refundValue);
-    }
 }
