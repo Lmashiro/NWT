@@ -61,9 +61,9 @@ contract SimpleCrowdSale is ERC20Token {
         }else if(totalSupply>=2000000000 * 100000000) {
             tokenContributionRate = 7777;
         }else if(totalSupply>=1000000000 * 100000000) {
-            $tokenContributionRate = 8750;
+            tokenContributionRate = 8750;
         }else if(totalSupply>=0) {
-            $tokenContributionRate = 10000;
+            tokenContributionRate = 10000;
         }
 
         uint256 tokenAmount = safeMul(msg.value, tokenContributionRate);
