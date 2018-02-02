@@ -53,7 +53,7 @@ contract SimpleCrowdSale is ERC20Token {
         assert(totalSupply < tokenContributionCap);
 
         //设置最小起投为0.1
-        assert(msg.value>0.1);
+        assert(msg.value>=0.1);
 
         //阶梯价格
         if(totalSupply>=3000000000 * 100000000) {
