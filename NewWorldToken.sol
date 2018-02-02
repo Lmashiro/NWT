@@ -29,7 +29,7 @@ contract SimpleCrowdSale is ERC20Token {
         _;
     }
 
-    // 设定ICO的 开始时间、持续时间、汇率、最小目标、最大目标、代币名称、符号
+    // 初始化合约
     function SimpleCrowdSale()
         ERC20Token("NewWorldToken", "NWT", 8)
     {
